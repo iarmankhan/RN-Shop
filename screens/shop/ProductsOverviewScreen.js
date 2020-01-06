@@ -1,14 +1,25 @@
 import React from 'react'
-import {FlatList, Platform, StyleSheet} from "react-native";
+import {Button, FlatList, Platform, StyleSheet, View} from "react-native";
 import {useSelector, useDispatch} from "react-redux";
 import {HeaderButton, HeaderButtons, Item} from "react-navigation-header-buttons";
 
 import ProductItem from "../../components/shop/ProductItem";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
 import * as cartActions from '../../store/actions/cart'
+import Colors from "../../constants/Colors";
 
 const ProductOverviewScreen = props => {
     const products = useSelector(state => state.products.availableProducts);
+
+    const selectItemHandler = (id, title) => {
+        props.navigation.navigate({
+            routeName: 'ProductDetail',
+            params: {
+                productId: id,
+                productTitle: title
+            }
+        })
+    };
 
     const dispatch = useDispatch();
     return (
@@ -17,19 +28,15 @@ const ProductOverviewScreen = props => {
                 title={itemData.item.title}
                 image={itemData.item.imageUrl}
                 price={itemData.item.price}
-                onViewDetail={() => {
-                    props.navigation.navigate({
-                        routeName: 'ProductDetail',
-                        params: {
-                            productId: itemData.item.id,
-                            productTitle: itemData.item.title
-                        }
-                    })
+                onSelect={() => {
+                    selectItemHandler(itemData.item.id, itemData.item.title)
                 }}
-                onAddToCart={() => {
-                    dispatch(cartActions.addToCart(itemData.item))
-                }}
-            />
+            >
+                <Button color={Colors.primary} title="View Details" onPress={() => {
+                    selectItemHandler(itemData.item.id, itemData.item.title)
+                }}/>
+                <Button color={Colors.primary} title="Add to cart" onPress={() => dispatch(cartActions.addToCart(itemData.item))}/>
+            </ProductItem>
             )} />
     );
 };
