@@ -5,11 +5,13 @@ import * as Fonts from 'expo-font'
 import {AppLoading} from "expo";
 
 import productsReducer from "./store/reducers/products";
+import cartReducer from "./store/reducers/cart"
 import ShopNavigator from './navigation/ShopNavigator'
-import {set} from "react-native-reanimated";
+
 
 const rootReducer = combineReducers({
-    products: productsReducer
+    products: productsReducer,
+    cart: cartReducer
 });
 
 const store = createStore(rootReducer);
