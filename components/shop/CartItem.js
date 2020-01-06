@@ -1,5 +1,5 @@
 import React from "react";
-import {View, StyleSheet, Text, Button, TouchableOpacity, Platform} from "react-native";
+import {View, StyleSheet, Text, TouchableOpacity, Platform} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 
 const CartItem = props => {
