@@ -1,9 +1,10 @@
 import React from "react";
 import {View, StyleSheet, Text, FlatList, Button} from "react-native";
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import Colors from "../../constants/Colors";
 import cart from "../../store/reducers/cart";
 import CartItem from "../../components/shop/CartItem";
+import * as cartActions from '../../store/actions/cart';
 
 const CartScreen = props => {
     const cartTotalAmount = useSelector(state => state.cart.totalAmount);
@@ -18,8 +19,10 @@ const CartScreen = props => {
                 sum: state.cart.items[key].sum
             })
         }
-        return transformedCartItems
+        return transformedCartItems.sort((a, b) => a.productId > b.productId ? 1 : -1)
     });
+
+    const dispatch = useDispatch();
 
     return (
         <View style={styles.screen}>
@@ -32,7 +35,9 @@ const CartScreen = props => {
                 title={itemData.item.productTitle}
                 quantity={itemData.item.quantity}
                 amount={itemData.item.sum}
-                onRemove={() => {}}
+                onRemove={() => {
+                    dispatch(cartActions.removeFromCart(itemData.item.productId))
+                }}
             />} keyExtractor={item => item.productId} />
         </View>
     )
