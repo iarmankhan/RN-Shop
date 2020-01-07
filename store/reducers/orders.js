@@ -5,6 +5,7 @@ const initialState = {
     orders: []
 };
 
+// noinspection JSRedundantSwitchStatement,JSRedundantSwitchStatement
 export default (state = initialState, action) => {
     switch (action.type) {
         case ADD_ORDER:

@@ -1,7 +1,7 @@
 import React from 'react'
-import {Button, FlatList, Platform, StyleSheet, View} from "react-native";
+import {Button, FlatList, Platform, StyleSheet} from "react-native";
 import {useSelector, useDispatch} from "react-redux";
-import {HeaderButton, HeaderButtons, Item} from "react-navigation-header-buttons";
+import {HeaderButtons, Item} from "react-navigation-header-buttons";
 
 import ProductItem from "../../components/shop/ProductItem";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
@@ -69,7 +69,7 @@ ProductOverviewScreen.navigationOptions = navData => {
    }
 };
 
-const styles = StyleSheet.create({
+StyleSheet.create({
 
 });
 

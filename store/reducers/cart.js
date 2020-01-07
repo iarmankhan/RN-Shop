@@ -1,7 +1,6 @@
 import {ADD_TO_CART} from "../actions/cart";
 import {REMOVE_FROM_CART} from "../actions/cart";
 import CartItem from "../../models/cart-item";
-import {act} from "react-dom/test-utils";
 import {ADD_ORDER} from "../actions/orders";
 import {DELETE_PRODUCT} from "../actions/products";
 
