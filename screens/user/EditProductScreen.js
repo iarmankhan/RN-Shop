@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import HeaderButton from '../../components/UI/HeaderButton';
 import * as productsActions from '../../store/actions/products';
+import Input from "../../components/UI/Input";
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 const fromReducer = (state, action) => {
@@ -102,50 +103,37 @@ const EditProductScreen = props => {
     return (
         <ScrollView>
             <View style={styles.form}>
-                <View style={styles.formControl}>
-                    <Text style={styles.label}>Title</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={formState.inputValues.title}
-                        onChangeText={textChangeHandler.bind(this, 'title')}
-                        keyboardType="default"
-                        autoCapitalize="sentences"
-                        autoCorrect
-                        returnKeyType="next"
-                    />
-                    {!formState.inputValidities.title && <Text>Please enter a valid value!</Text>}
-                </View>
-                <View style={styles.formControl}>
-                    <Text style={styles.label}>Image URL</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={formState.inputValues.imageUrl}
-                        onChangeText={textChangeHandler.bind(this, 'imageUrl')}
-                    />
-                    {!formState.inputValidities.imageUrl && <Text>Please enter a valid value!</Text>}
-                </View>
+                <Input
+                    label="Title"
+                    keyBoardType="default"
+                    autoCapitalize="sentences"
+                    autoCorrect
+                    returnKeyType="next"
+                    errorText="Please enter a valid title"
+                />
+                <Input
+                    label="Image URL"
+                    keyBoardType="default"
+                    returnKeyType="next"
+                    errorText="Please enter a valid image url"
+                />
                 {editedProduct ? null : (
-                    <View style={styles.formControl}>
-                        <Text style={styles.label}>Price</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={formState.inputValues.price}
-                            onChangeText={textChangeHandler.bind(this, 'price')}
-                            keyboardType="decimal-pad"
-                        />
-                        {!formState.inputValidities.price && <Text>Please enter a valid value!</Text>}
-                    </View>
-
-                )}
-                <View style={styles.formControl}>
-                    <Text style={styles.label}>Description</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={formState.inputValues.description}
-                        onChangeText={textChangeHandler.bind(this, 'description')}
+                    <Input
+                        label="Price"
+                        keyBoardType="decimal-pad"
+                        returnKeyType="next"
+                        errorText="Please enter a valid price"
                     />
-                    {!formState.inputValidities.description && <Text>Please enter a valid value!</Text>}
-                </View>
+                )}
+                <Input
+                    label="Description"
+                    keyBoardType="default"
+                    autoCapitalize="sentences"
+                    autoCorrect
+                    multiline
+                    numberOfLines={3}
+                    errorText="Please enter a valid description"
+                />
             </View>
         </ScrollView>
     );
@@ -175,19 +163,6 @@ const styles = StyleSheet.create({
     form: {
         margin: 20
     },
-    formControl: {
-        width: '100%'
-    },
-    label: {
-        fontFamily: 'open-sans-bold',
-        marginVertical: 8
-    },
-    input: {
-        paddingHorizontal: 2,
-        paddingVertical: 5,
-        borderBottomColor: '#ccc',
-        borderBottomWidth: 1
-    }
 });
 
 export default EditProductScreen;
