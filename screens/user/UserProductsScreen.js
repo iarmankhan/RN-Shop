@@ -1,5 +1,5 @@
-import React from "react";
-import {Alert, Button, FlatList, Platform} from "react-native";
+import React, {useEffect, useState} from "react";
+import {Alert, Button, FlatList, Platform, ActivityIndicator, StyleSheet, View} from "react-native";
 
 import ProductItem from "../../components/shop/ProductItem";
 import {useDispatch, useSelector} from "react-redux";
@@ -9,6 +9,9 @@ import Colors from "../../constants/Colors";
 import {deleteProduct} from "../../store/actions/products";
 
 const UserProductScreen = props => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState();
+
     const userProducts = useSelector(state => state.products.userProducts);
     const dispatch = useDispatch();
 
@@ -16,6 +19,28 @@ const UserProductScreen = props => {
         props.navigation.navigate('EditProduct', {productId: id})
     };
 
+    useEffect(() => {
+        if(error){
+            Alert.alert(
+                'An error occurred!',
+                error,
+                [{
+                    text: 'Okay'
+                }]
+            )
+        }
+    }, [error]);
+
+    const confirmDelete = async (id) => {
+        try{
+            setError(null);
+            setIsLoading(true);
+            await dispatch(deleteProduct(id));
+        } catch (e) {
+            setError(e.message)
+        }
+        setIsLoading(false);
+    };
 
     const deleteHandler = (id) => {
         Alert.alert(
@@ -28,10 +53,18 @@ const UserProductScreen = props => {
                 {
                     text: 'Yes',
                     styles: 'destructive',
-                    onPress: () => {dispatch(deleteProduct(id))}
+                    onPress: () => {confirmDelete(id)}
                 }]
         )
     };
+
+    if(isLoading) {
+        return (
+            <View style={styles.centered}>
+                <ActivityIndicator size="large" color={Colors.primary}/>
+            </View>
+        )
+    }
 
     return (
         <FlatList
@@ -79,5 +112,13 @@ UserProductScreen.navigationOptions = navData => {
         ),
     }
 };
+
+const styles = StyleSheet.create({
+    centered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+})
 
 export default UserProductScreen
