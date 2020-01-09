@@ -32,9 +32,9 @@ const UserProductScreen = props => {
     }, [error]);
 
     const confirmDelete = async (id) => {
+        setError(null);
+        setIsLoading(true);
         try{
-            setError(null);
-            setIsLoading(true);
             await dispatch(deleteProduct(id));
         } catch (e) {
             setError(e.message)

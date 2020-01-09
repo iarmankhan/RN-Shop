@@ -41,9 +41,9 @@ const CartScreen = props => {
     }, [error]);
 
     const orderHandler = async (cartItems, cartTotalAmount) => {
+        setIsLoading(true);
+        setError(null);
         try{
-            setIsLoading(true);
-            setError(null);
             await dispatch(orderActions.addOrder(cartItems, cartTotalAmount))
         } catch (e) {
             setError(e.message);
