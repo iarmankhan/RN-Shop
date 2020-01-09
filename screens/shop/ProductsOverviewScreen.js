@@ -12,6 +12,7 @@ import Colors from "../../constants/Colors";
 const ProductOverviewScreen = props => {
     const products = useSelector(state => state.products.availableProducts);
     const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState();
 
     const selectItemHandler = (id, title) => {
@@ -28,13 +29,13 @@ const ProductOverviewScreen = props => {
 
     const loadProducts = useCallback(async () =>{
         setError(null);
-        setIsLoading(true);
+        setIsRefreshing(true);
         try{
             await dispatch(productActions.fetchProducts());
         }catch (err) {
             setError(err.message);
         }
-        setIsLoading(false);
+        setIsRefreshing(false);
     }, [dispatch, setIsLoading, setError]);
 
     useEffect(() => {
@@ -46,7 +47,10 @@ const ProductOverviewScreen = props => {
     }, [loadProducts]);
 
     useEffect(() => {
-        loadProducts();
+        setIsLoading(true);
+        loadProducts().then(() => {
+            setIsLoading(false);
+        });
     }, [dispatch, loadProducts]);
 
     if(error){
@@ -75,20 +79,24 @@ const ProductOverviewScreen = props => {
     }
 
     return (
-        <FlatList data={products} renderItem={itemData => (
-            <ProductItem
-                title={itemData.item.title}
-                image={itemData.item.imageUrl}
-                price={itemData.item.price}
-                onSelect={() => {
-                    selectItemHandler(itemData.item.id, itemData.item.title)
-                }}
-            >
-                <Button color={Colors.primary} title="View Details" onPress={() => {
-                    selectItemHandler(itemData.item.id, itemData.item.title)
-                }}/>
-                <Button color={Colors.primary} title="Add to cart" onPress={() => dispatch(cartActions.addToCart(itemData.item))}/>
-            </ProductItem>
+        <FlatList
+            onRefresh={loadProducts}
+            refreshing={isRefreshing}
+            data={products}
+            renderItem={itemData => (
+                <ProductItem
+                    title={itemData.item.title}
+                    image={itemData.item.imageUrl}
+                    price={itemData.item.price}
+                    onSelect={() => {
+                        selectItemHandler(itemData.item.id, itemData.item.title)
+                    }}
+                >
+                    <Button color={Colors.primary} title="View Details" onPress={() => {
+                        selectItemHandler(itemData.item.id, itemData.item.title)
+                    }}/>
+                    <Button color={Colors.primary} title="Add to cart" onPress={() => dispatch(cartActions.addToCart(itemData.item))}/>
+                </ProductItem>
             )} />
     );
 };

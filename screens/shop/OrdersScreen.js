@@ -10,44 +10,69 @@ import Colors from "../../constants/Colors";
 
 const OrdersScreen = props => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState();
 
     const orders = useSelector(state => state.orders.orders);
     const dispatch = useDispatch();
 
-    const loadOrders = useCallback(async() => {
+    const loadOrders = useCallback(async () => {
         setError(null);
-        setIsLoading(true);
-        try{
+        setIsRefreshing(true);
+        try {
             await dispatch(ordersAction.fetchOrders());
         } catch (e) {
             setError(e.message);
         }
-        setIsLoading(false);
+        setIsRefreshing(false);
     }, [dispatch, setIsLoading, setError]);
 
     useEffect(() => {
-        loadOrders();
+        const willFocusSub = props.navigation.addListener('willFocus', loadOrders);
+
+        return () => {
+            willFocusSub.remove();
+        };
     }, [loadOrders]);
 
-    if(error){
+    useEffect(() => {
+        setIsLoading(true);
+        loadOrders().then(() => {
+            setIsLoading(false)
+        });
+    }, [loadOrders]);
+
+    if (error) {
         return (
             <View style={styles.centered}>
                 <Text>Some errors occurred!</Text>
-                <Button title="Try Again!" onPress={loadOrders} color={Colors.primary} />
+                <Button title="Try Again!" onPress={loadOrders} color={Colors.primary}/>
             </View>
         )
     }
 
-    if(isLoading) {
+    if (isLoading) {
         return (
             <View style={styles.centered}>
-                <ActivityIndicator size="large" color={Colors.primary} />
+                <ActivityIndicator size="large" color={Colors.primary}/>
             </View>
         )
     }
 
-    return <FlatList data={orders} renderItem={itemData => <OrderItem amount={itemData.item.totalAmount} date={itemData.item.readableDate} items={itemData.item.items} />} />
+    return (
+        <FlatList
+            onRefresh={loadOrders}
+            refreshing={isRefreshing}
+            data={orders}
+            renderItem={itemData => (
+                <OrderItem
+                    amount={itemData.item.totalAmount}
+                    date={itemData.item.readableDate}
+                    items={itemData.item.items}
+                />)
+            }
+        />
+    )
 };
 
 OrdersScreen.navigationOptions = navData => {
@@ -68,11 +93,11 @@ OrdersScreen.navigationOptions = navData => {
 };
 
 const styles = StyleSheet.create({
-   centered: {
-       flex: 1,
-       justifyContent: 'center',
-       alignItems: 'center'
-   }
+    centered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
 });
 
 export default OrdersScreen
