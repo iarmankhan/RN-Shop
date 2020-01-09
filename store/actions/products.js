@@ -7,10 +7,10 @@ export const SET_PRODUCTS = 'SET_PRODUCTS';
 
 export const fetchProducts = () => {
     return async dispatch => {
-        try{
+        try {
             const response = await fetch('https://rn-shop-arman.firebaseio.com/products.json');
 
-            if(!response.ok){
+            if (!response.ok) {
                 // Find error
                 throw new Error("Something went wrong!");
             }
@@ -34,7 +34,13 @@ export const fetchProducts = () => {
 };
 
 export const deleteProduct = productId => {
-    return { type: DELETE_PRODUCT, pid: productId };
+    return async dispatch => {
+        await fetch(`https://rn-shop-arman.firebaseio.com/products/${productId}.json`, {
+            method: 'DELETE'
+        });
+
+        dispatch({type: DELETE_PRODUCT, pid: productId})
+    };
 };
 
 export const createProduct = (title, description, imageUrl, price) => {
@@ -69,13 +75,28 @@ export const createProduct = (title, description, imageUrl, price) => {
 };
 
 export const updateProduct = (id, title, description, imageUrl) => {
-    return {
-        type: UPDATE_PRODUCT,
-        pid: id,
-        productData: {
-            title,
-            description,
-            imageUrl,
-        }
+    return async dispatch => {
+        //Any async code !!!
+        await fetch(`https://rn-shop-arman.firebaseio.com/products/${id}.json`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title,
+                description,
+                imageUrl
+            })
+        });
+
+        dispatch({
+            type: UPDATE_PRODUCT,
+            pid: id,
+            productData: {
+                title,
+                description,
+                imageUrl,
+            }
+        });
     };
 };
