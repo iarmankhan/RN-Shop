@@ -51,25 +51,20 @@ const CartScreen = props => {
         setIsLoading(false);
     };
 
-    if(isLoading){
-        return (
-            <View style={styles.centered}>
-                <ActivityIndicator color={Colors.primary} size="large"/>
-            </View>
-        )
-    }
-
     return (
         <View style={styles.screen}>
             <Card style={styles.summary}>
                 <Text style={styles.summaryText}>Total: <Text style={styles.amount}>${Math.round(cartTotalAmount.toFixed(2) * 100) / 100}</Text></Text>
-                <Button
-                    color={Colors.accent}
-                    title="Order Now"
-                    onPress={() => {
-                        orderHandler(cartItems, cartTotalAmount)
-                    }}
-                    disabled={cartItems.length === 0}/>
+                {isLoading
+                    ? <View style={styles.centered}><ActivityIndicator size="small" color={Colors.primary} /></View>
+                    : <Button
+                        color={Colors.accent}
+                        title="Order Now"
+                        onPress={() => {
+                            orderHandler(cartItems, cartTotalAmount)
+                        }}
+                        disabled={cartItems.length === 0}
+                    />}
             </Card>
             <FlatList data={cartItems} renderItem={itemData => <CartItem
                 title={itemData.item.productTitle}
@@ -93,7 +88,6 @@ const styles = StyleSheet.create({
         margin: 20
     },
     centered:{
-      flex: 1,
       alignItems: 'center',
       justifyContent: 'center'
     },
