@@ -1,5 +1,5 @@
-import React from "react";
-import {View, StyleSheet, Text, FlatList, Button} from "react-native";
+import React, {useEffect, useState} from "react";
+import {View, StyleSheet, Text, FlatList, Button, ActivityIndicator, Alert} from "react-native";
 import {useSelector, useDispatch} from "react-redux";
 import Colors from "../../constants/Colors";
 import CartItem from "../../components/shop/CartItem";
@@ -8,6 +8,9 @@ import * as orderActions from '../../store/actions/orders'
 import Card from "../../components/UI/Card";
 
 const CartScreen = props => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState();
+
     const cartTotalAmount = useSelector(state => state.cart.totalAmount);
     const cartItems = useSelector(state => {
         const transformedCartItems = [];
@@ -25,6 +28,37 @@ const CartScreen = props => {
 
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        if(error) {
+            Alert.alert(
+                'An error occurred!',
+                error,
+                [{
+                    text: 'Okay'
+                }]
+            )
+        }
+    }, [error]);
+
+    const orderHandler = async (cartItems, cartTotalAmount) => {
+        try{
+            setIsLoading(true);
+            setError(null);
+            await dispatch(orderActions.addOrder(cartItems, cartTotalAmount))
+        } catch (e) {
+            setError(e.message);
+        }
+        setIsLoading(false);
+    };
+
+    if(isLoading){
+        return (
+            <View style={styles.centered}>
+                <ActivityIndicator color={Colors.primary} size="large"/>
+            </View>
+        )
+    }
+
     return (
         <View style={styles.screen}>
             <Card style={styles.summary}>
@@ -33,7 +67,7 @@ const CartScreen = props => {
                     color={Colors.accent}
                     title="Order Now"
                     onPress={() => {
-                        dispatch(orderActions.addOrder(cartItems, cartTotalAmount))
+                        orderHandler(cartItems, cartTotalAmount)
                     }}
                     disabled={cartItems.length === 0}/>
             </Card>
@@ -57,6 +91,11 @@ CartScreen.navigationOptions = {
 const styles = StyleSheet.create({
     screen: {
         margin: 20
+    },
+    centered:{
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center'
     },
     summary: {
         flexDirection: 'row',
