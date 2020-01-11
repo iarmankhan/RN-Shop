@@ -15,8 +15,14 @@ export const signUp = (email, password) => {
             })
         });
 
-        if(!response.ok){
-            throw new Error("Something went wrong");
+        if (!response.ok) {
+            const errorResponseData = await response.json();
+            const errorId = errorResponseData.error.message;
+            let message = 'Something went wrong!';
+            if (errorId === 'EMAIL_EXISTS') {
+                message = 'Email already exist!';
+            }
+            throw new Error(message);
         }
 
         const resData = await response.json();
@@ -42,9 +48,22 @@ export const logIn = (email, password) => {
             })
         });
 
-        if(!response.ok){
-            console.log(response);
-            throw new Error("Something went wrong");
+        if (!response.ok) {
+            const errorResponseData = await response.json();
+            const errorId = errorResponseData.error.message;
+            let message = 'Something went wrong!';
+            switch (errorId) {
+                case 'EMAIL_NOT_FOUND':
+                    message = 'Email doesn\'t exist!';
+                    break;
+                case 'INVALID_PASSWORD':
+                    message = 'Incorrect Password!';
+                    break;
+                case 'USER_DISABLED':
+                    message = 'Account is disabled by admin!';
+                    break;
+            }
+            throw new Error(message);
         }
 
         const resData = await response.json();
