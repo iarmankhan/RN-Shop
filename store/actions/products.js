@@ -34,8 +34,9 @@ export const fetchProducts = () => {
 };
 
 export const deleteProduct = productId => {
-    return async dispatch => {
-        const response = await fetch(`https://rn-shop-arman.firebaseio.com/products/${productId}.json`, {
+    return async (dispatch, getState) => {
+        const token = getState().auth.token;
+        const response = await fetch(`https://rn-shop-arman.firebaseio.com/products/${productId}.json?auth=${token}`, {
             method: 'DELETE'
         });
 
@@ -47,9 +48,10 @@ export const deleteProduct = productId => {
 };
 
 export const createProduct = (title, description, imageUrl, price) => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         //Any async code !!!
-        const response = await fetch('https://rn-shop-arman.firebaseio.com/products.json', {
+        const token = getState().auth.token;
+        const response = await fetch(`https://rn-shop-arman.firebaseio.com/products.json?auth=${token}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -82,9 +84,10 @@ export const createProduct = (title, description, imageUrl, price) => {
 };
 
 export const updateProduct = (id, title, description, imageUrl) => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         //Any async code !!!
-        const response = await fetch(`https://rn-shop-arman.firebaseio.com/products/${id}.json`, {
+        const token = getState().auth.token;
+        const response = await fetch(`https://rn-shop-arman.firebaseio.com/products/${id}.json?auth=${token}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
