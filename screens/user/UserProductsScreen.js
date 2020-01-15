@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Alert, Button, FlatList, Platform, ActivityIndicator, StyleSheet, View} from "react-native";
+import {Alert, Button, FlatList, Platform, ActivityIndicator, StyleSheet, View, Text} from "react-native";
 
 import ProductItem from "../../components/shop/ProductItem";
 import {useDispatch, useSelector} from "react-redux";
@@ -20,7 +20,7 @@ const UserProductScreen = props => {
     };
 
     useEffect(() => {
-        if(error){
+        if (error) {
             Alert.alert(
                 'An error occurred!',
                 error,
@@ -34,7 +34,7 @@ const UserProductScreen = props => {
     const confirmDelete = async (id) => {
         setError(null);
         setIsLoading(true);
-        try{
+        try {
             await dispatch(deleteProduct(id));
         } catch (e) {
             setError(e.message)
@@ -53,17 +53,27 @@ const UserProductScreen = props => {
                 {
                     text: 'Yes',
                     styles: 'destructive',
-                    onPress: () => {confirmDelete(id)}
+                    onPress: () => {
+                        confirmDelete(id)
+                    }
                 }]
         )
     };
 
-    if(isLoading) {
+    if (isLoading) {
         return (
             <View style={styles.centered}>
                 <ActivityIndicator size="large" color={Colors.primary}/>
             </View>
         )
+    }
+
+    if (userProducts.length === 0) {
+        return (
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <Text>No products found, maybe start creating some!</Text>
+            </View>
+        );
     }
 
     return (
@@ -75,10 +85,14 @@ const UserProductScreen = props => {
                     image={itemData.item.imageUrl}
                     title={itemData.item.title}
                     price={itemData.item.price}
-                    onSelect={() => {editProduct(itemData.item.id)}}
+                    onSelect={() => {
+                        editProduct(itemData.item.id)
+                    }}
                 >
-                <Button color={Colors.primary} title="Edit" onPress={() => {editProduct(itemData.item.id)}}/>
-                <Button color={Colors.primary} title="Delete" onPress={deleteHandler.bind(this, itemData.item.id)}/>
+                    <Button color={Colors.primary} title="Edit" onPress={() => {
+                        editProduct(itemData.item.id)
+                    }}/>
+                    <Button color={Colors.primary} title="Delete" onPress={deleteHandler.bind(this, itemData.item.id)}/>
                 </ProductItem>
             )}
         />
@@ -100,15 +114,15 @@ UserProductScreen.navigationOptions = navData => {
             </HeaderButtons>
         ),
         headerRight: () => (
-          <HeaderButtons HeaderButtonComponent={CustomHeaderButton} title="addProduct">
-              <Item
-                  title="Add"
-                  iconName={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
-                  onPress={() => {
-                      navData.navigation.navigate('EditProduct');
-                  }}
-              />
-          </HeaderButtons>
+            <HeaderButtons HeaderButtonComponent={CustomHeaderButton} title="addProduct">
+                <Item
+                    title="Add"
+                    iconName={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
+                    onPress={() => {
+                        navData.navigation.navigate('EditProduct');
+                    }}
+                />
+            </HeaderButtons>
         ),
     }
 };
