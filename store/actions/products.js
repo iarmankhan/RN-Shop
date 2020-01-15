@@ -20,7 +20,7 @@ export const fetchProducts = () => {
             const loadedProducts = [];
 
             for (const key in resData) {
-                loadedProducts.push(new Product(key, 'u1', resData[key].title, resData[key].imageUrl, resData[key].description, resData[key].price));
+                loadedProducts.push(new Product(key, resData[key].ownerId, resData[key].title, resData[key].imageUrl, resData[key].description, resData[key].price));
             }
             dispatch({
                 type: SET_PRODUCTS,
